@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>വരവ് ചെലവ് - Daily Expense Tracker</title>
+<meta name="theme-color" content="#107a60">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="വരവ്-ചെലവ്">
+<link rel="icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-dark:#0c2f2b;
+    --green:#107a60;
+    --green-light:#16a97e;
+    --green-soft:#e6f6f0;
+    --red:#e5484d;
+    --red-soft:#fdecec;
+    --gold:#e6a826;
+    --bg:#f4f7f6;
+    --card:#ffffff;
+    --text:#1c2b28;
+    --muted:#6c7a76;
+    --border:#e5eceb;
+    --radius:16px;
+    --shadow:0 4px 16px rgba(12,47,43,0.08);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    height:100%;
+    background:var(--bg);
+    font-family:'Noto Sans Malayalam','Poppins',sans-serif;
+    color:var(--text);
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior-y:none;
+  }
+  #app{ max-width:520px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; position:relative; background:var(--bg);}
+
+  /* Header */
+  header.topbar{
+    background:linear-gradient(160deg,var(--green) 0%, var(--green-dark) 100%);
+    color:#fff; padding:18px 18px 60px 18px; position:relative;
+  }
+  header.topbar .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px;}
+  header.topbar .brand img{ width:32px; height:32px; border-radius:9px;}
+  .balance-card{
+    position:absolute; left:16px; right:16px; bottom:-46px;
+    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    display:flex; padding:14px 6px; text-align:center;
+  }
+  .balance-card .col{ flex:1; padding:4px 2px; border-left:1px solid var(--border);}
+  .balance-card .col:first-child{ border-left:none;}
+  .balance-card .label{ font-size:11.5px; color:var(--muted); margin-bottom:4px; font-weight:500;}
+  .balance-card .val{ font-size:15px; font-weight:700;}
+  .val.income{ color:var(--green);}
+  .val.expense{ color:var(--red);}
+  .val.balance{ color:var(--green-dark);}
+
+  main{ flex:1; padding:64px 14px 90px 14px; }
+  section{ display:none; animation:fadeIn .18s ease; }
+  section.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  h2.section-title{ font-size:16px; font-weight:700; margin:6px 2px 12px 2px; color:var(--green-dark); display:flex; align-items:center; gap:8px;}
+
+  .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+
+  /* Type toggle */
+  .type-toggle{ display:flex; background:var(--green-soft); border-radius:12px; padding:4px; margin-bottom:14px;}
+  .type-toggle button{ flex:1; border:none; background:transparent; padding:10px 0; border-radius:9px; font-family:inherit; font-weight:700; font-size:14px; color:var(--muted); cursor:pointer; transition:.15s;}
+  .type-toggle button.active-income{ background:var(--green); color:#fff; box-shadow:0 3px 8px rgba(16,122,96,.35);}
+  .type-toggle button.active-expense{ background:var(--red); color:#fff; box-shadow:0 3px 8px rgba(229,72,77,.35);}
+
+  label{ font-size:12.5px; font-weight:600; color:var(--muted); display:block; margin:10px 0 6px 2px;}
+  input,select,textarea{
+    width:100%; padding:12px 12px; border:1.5px solid var(--border); border-radius:10px;
+    font-family:inherit; font-size:14.5px; background:#fbfdfc; color:var(--text);
+  }
+  input:focus,select:focus,textarea:focus{ outline:none; border-color:var(--green-light); background:#fff;}
+  .amount-row{ position:relative;}
+  .amount-row span{ position:absolute; left:12px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--muted);}
+  .amount-row input{ padding-left:28px; font-weight:700; font-size:17px;}
+
+  .cat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:6px;}
+  .cat-chip{
+    display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px;
+    border-radius:12px; border:1.5px solid var(--border); background:#fbfdfc; cursor:pointer; font-size:11px; font-weight:600; color:var(--text);
+  }
+  .cat-chip .emoji{ font-size:20px;}
+  .cat-chip.selected{ border-color:var(--green); background:var(--green-soft); color:var(--green-dark);}
+  .cat-chip.selected.expense-selected{ border-color:var(--red); background:var(--red-soft); color:var(--red);}
+
+  .btn{
+    display:block; width:100%; text-align:center; padding:14px; border:none; border-radius:12px;
+    font-family:inherit; font-weight:700; font-size:15px; cursor:pointer; margin-top:16px; color:#fff;
+    background:linear-gradient(160deg,var(--green-light),var(--green)); box-shadow:0 4px 12px rgba(16,122,96,.3);
+  }
+  .btn.expense-btn{ background:linear-gradient(160deg,#f16b6f,var(--red)); box-shadow:0 4px 12px rgba(229,72,77,.3);}
+  .btn.secondary{ background:#fff; color:var(--green-dark); border:1.5px solid var(--border); box-shadow:none;}
+  .btn.gold{ background:linear-gradient(160deg,#f0bd52,var(--gold)); box-shadow:0 4px 12px rgba(230,168,38,.3);}
+  .btn.small{ padding:9px; font-size:13px; margin-top:8px;}
+  .btn.danger{ background:linear-gradient(160deg,#f16b6f,var(--red));}
+
+  /* History */
+  .day-group{ margin-bottom:14px;}
+  .day-header{ display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:700; color:var(--muted); padding:0 4px 6px 4px;}
+  .day-header .day-total{ font-weight:700;}
+  .tx-item{
+    background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:12px 14px; display:flex; align-items:center; gap:10px; margin-bottom:8px;
+  }
+  .tx-icon{ width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
+  .tx-icon.income{ background:var(--green-soft);}
+  .tx-icon.expense{ background:var(--red-soft);}
+  .tx-mid{ flex:1; min-width:0;}
+  .tx-cat{ font-weight:700; font-size:14px;}
+  .tx-note{ font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .tx-right{ text-align:right; flex-shrink:0;}
+  .tx-amt{ font-weight:800; font-size:14.5px;}
+  .tx-amt.income{ color:var(--green);}
+  .tx-amt.expense{ color:var(--red);}
+  .tx-actions{ display:flex; gap:6px; margin-top:4px;}
+  .tx-actions button{ border:none; background:var(--bg); border-radius:6px; padding:3px 7px; font-size:11px; cursor:pointer; color:var(--muted);}
+
+  .empty-state{ text-align:center; padding:40px 16px; color:var(--muted);}
+  .empty-state .emoji{ font-size:40px; margin-bottom:10px;}
+
+  /* Bottom nav */
+  nav.bottomnav{
+    position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--border);
+    display:flex; max-width:520px; margin:0 auto; box-shadow:0 -4px 14px rgba(0,0,0,0.06); z-index:50;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.bottomnav button{
+    flex:1; background:none; border:none; padding:9px 2px 8px 2px; display:flex; flex-direction:column; align-items:center; gap:2px;
+    font-family:inherit; color:var(--muted); font-size:10.5px; font-weight:600; cursor:pointer;
+  }
+  nav.bottomnav button .ic{ font-size:19px;}
+  nav.bottomnav button.active{ color:var(--green);}
+
+  /* Category manage */
+  .cat-manage-list{ display:flex; flex-direction:column; gap:8px; margin-top:8px;}
+  .cat-manage-item{ display:flex; align-items:center; gap:10px; padding:10px 12px; background:#fbfdfc; border:1px solid var(--border); border-radius:10px;}
+  .cat-manage-item .emoji{ font-size:18px;}
+  .cat-manage-item .name{ flex:1; font-weight:600; font-size:13.5px;}
+  .cat-manage-item button{ border:none; background:none; font-size:15px; cursor:pointer; padding:2px 4px; color:var(--muted);}
+
+  .tabs2{ display:flex; gap:8px; margin-bottom:12px;}
+  .tabs2 button{ flex:1; padding:9px; border-radius:10px; border:1.5px solid var(--border); background:#fff; font-family:inherit; font-weight:700; font-size:12.5px; color:var(--muted); cursor:pointer;}
+  .tabs2 button.active{ background:var(--green-soft); border-color:var(--green); color:var(--green-dark);}
+
+  .summary-mini{ display:flex; gap:10px; margin-bottom:14px;}
+  .summary-mini .box{ flex:1; background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:12px; text-align:center;}
+  .summary-mini .box .lab{ font-size:11px; color:var(--muted); font-weight:600;}
+  .summary-mini .box .num{ font-size:16px; font-weight:800; margin-top:4px;}
+
+  .toast{
+    position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--green-dark); color:#fff;
+    padding:11px 20px; border-radius:30px; font-size:13px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.25);
+    opacity:0; pointer-events:none; transition:.25s; z-index:100; white-space:nowrap;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px);}
+
+  .modal-bg{ position:fixed; inset:0; background:rgba(12,47,43,.45); display:none; align-items:flex-end; justify-content:center; z-index:200;}
+  .modal-bg.show{ display:flex;}
+  .modal{ background:#fff; width:100%; max-width:520px; border-radius:20px 20px 0 0; padding:20px; max-height:85vh; overflow-y:auto;}
+  .modal h3{ font-size:16px; margin-bottom:14px; color:var(--green-dark);}
+  .modal .close-x{ float:right; background:var(--bg); border:none; width:28px; height:28px; border-radius:50%; font-size:15px; cursor:pointer; color:var(--muted);}
+
+  .row-flex{ display:flex; gap:10px;}
+  .row-flex > div{ flex:1;}
+
+  .install-banner{
+    background:var(--green-soft); border:1.5px dashed var(--green-light); border-radius:12px; padding:10px 12px; font-size:12px; color:var(--green-dark); margin-bottom:14px; display:none;
+  }
+  .install-banner.show{ display:block;}
+  .install-banner button{ margin-top:8px; background:var(--green); color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12px; font-family:inherit;}
+
+  ::-webkit-scrollbar{ width:0; height:0;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand"><img src="icons/icon-192.png" alt=""><span>വരവ് ചെലവ്</span></div>
+    <div class="balance-card">
+      <div class="col"><div class="label">ആകെ വരവ്</div><div class="val income" id="sumIncome">₹0</div></div>
+      <div class="col"><div class="label">ആകെ ചെലവ്</div><div class="val expense" id="sumExpense">₹0</div></div>
+      <div class="col"><div class="label">ബാക്കി</div><div class="val balance" id="sumBalance">₹0</div></div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HOME -->
+    <section id="sec-home" class="active">
+      <div id="installBanner" class="install-banner">
+        📲 ഈ ആപ്പ് നിങ്ങളുടെ ഫോണിൽ ഇൻസ്റ്റാൾ ചെയ്യാം.
+        <button id="installBtn">ഇൻസ്റ്റാൾ ചെയ്യുക</button>
+      </div>
+
+      <h2 class="section-title">📅 ഇന്ന്</h2>
+      <div class="summary-mini">
+        <div class="box"><div class="lab">വരവ്</div><div class="num" id="todayIncome" style="color:var(--green)">₹0</div></div>
+        <div class="box"><div class="lab">ചെലവ്</div><div class="num" id="todayExpense" style="color:var(--red)">₹0</div></div>
+        <div class="box"><div class="lab">ബാക്കി</div><div class="num" id="todayBalance">₹0</div></div>
+      </div>
+
+      <h2 class="section-title">🗓️ ഈ മാസം</h2>
+      <div class="summary-mini">
+        <div class="box"><div class="lab">വരവ്</div><div class="num" id="monthIncome" style="color:var(--green)">₹0</div></div>
+        <div class="box"><div class="lab">ചെലവ്</div><div class="num" id="monthExpense" style="color:var(--red)">₹0</div></div>
+        <div class="box"><div class="lab">ബാക്കി</div><div class="num" id="monthBalance">₹0</div></div>
+      </div>
+
+      <h2 class="section-title">🕓 അടുത്തിടെ</h2>
+      <div id="recentList"></div>
+    </section>
+
+    <!-- ENTRY -->
+    <section id="sec-entry">
+      <h2 class="section-title" id="entryTitle">➕ പുതിയ എൻട്രി</h2>
+      <div class="card">
+        <div class="type-toggle">
+          <button id="typeIncomeBtn" onclick="setType('income')">💰 വരവ്</button>
+          <button id="typeExpenseBtn" onclick="setType('expense')">💸 ചെലവ്</button>
+        </div>
+
+        <label>തുക (₹)</label>
+        <div class="amount-row"><span>₹</span><input type="number" inputmode="decimal" id="fAmount" placeholder="0.00"></div>
+
+        <label>തീയതി</label>
+        <input type="date" id="fDate">
+
+        <label>കാറ്റഗറി</label>
+        <div class="cat-grid" id="fCatGrid"></div>
+
+        <label>കുറിപ്പ് (ഓപ്ഷണൽ)</label>
+        <textarea id="fNote" rows="2" placeholder="വിവരണം എഴുതുക..."></textarea>
+
+        <input type="hidden" id="fEditId">
+        <button class="btn" id="fSaveBtn" onclick="saveTransaction()">സേവ് ചെയ്യുക</button>
+        <button class="btn secondary" id="fCancelBtn" style="display:none" onclick="resetForm()">ക്യാൻസൽ</button>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="sec-history">
+      <h2 class="section-title">📜 ചരിത്രം</h2>
+      <div class="card" style="padding:12px;">
+        <div class="row-flex">
+          <div><label style="margin-top:0">തരം</label>
+            <select id="histFilterType" onchange="renderHistory()">
+              <option value="all">എല്ലാം</option>
+              <option value="income">വരവ്</option>
+              <option value="expense">ചെലവ്</option>
+            </select>
+          </div>
+          <div><label style="margin-top:0">മാസം</label>
+            <input type="month" id="histFilterMonth" onchange="renderHistory()">
+          </div>
+        </div>
+      </div>
+      <div id="historyList"></div>
+    </section>
+
+    <!-- REPORT -->
+    <section id="sec-report">
+      <h2 class="section-title">📊 റിപ്പോർട്ട്</h2>
+      <div class="card">
+        <div class="row-flex">
+          <div><label style="margin-top:0">തുടക്കം</label><input type="date" id="repFrom"></div>
+          <div><label style="margin-top:0">അവസാനം</label><input type="date" id="repTo"></div>
+        </div>
+        <label>തരം</label>
+        <select id="repType">
+          <option value="all">വരവും ചെലവും</option>
+          <option value="income">വരവ് മാത്രം</option>
+          <option value="expense">ചെലവ് മാത്രം</option>
+        </select>
+        <button class="btn secondary" onclick="setReportRange('today')" style="margin-top:12px;">ഇന്ന്</button>
+        <div class="row-flex" style="margin-top:8px;">
+          <button class="btn secondary small" onclick="setReportRange('week')">ഈ ആഴ്ച</button>
+          <button class="btn secondary small" onclick="setReportRange('month')">ഈ മാസം</button>
+        </div>
+        <button class="btn" onclick="generateReport()">റിപ്പോർട്ട് കാണിക്കുക</button>
+      </div>
+
+      <div id="reportResult"></div>
+    </section>
+
+    <!-- CATEGORY -->
+    <section id="sec-category">
+      <h2 class="section-title">🏷️ കാറ്റഗറികൾ</h2>
+      <div class="tabs2">
+        <button id="catTabIncome" class="active" onclick="switchCatTab('income')">💰 വരവ്</button>
+        <button id="catTabExpense" onclick="switchCatTab('expense')">💸 ചെലവ്</button>
+      </div>
+      <div class="card">
+        <label style="margin-top:0">പുതിയ കാറ്റഗറി</label>
+        <div class="row-flex">
+          <div style="flex:0 0 60px;"><input type="text" id="newCatEmoji" maxlength="2" value="🏷️" style="text-align:center; font-size:18px;"></div>
+          <div><input type="text" id="newCatName" placeholder="കാറ്റഗറി പേര്"></div>
+        </div>
+        <button class="btn gold small" onclick="addCategory()">കാറ്റഗറി ചേർക്കുക</button>
+      </div>
+      <div class="cat-manage-list" id="catManageList"></div>
+    </section>
+
+    <!-- BACKUP -->
+    <section id="sec-backup">
+      <h2 class="section-title">☁️ ബാക്കപ്പ് &amp; റീസ്റ്റോർ</h2>
+      <div class="card">
+        <p style="font-size:13px; color:var(--muted); line-height:1.6;">നിങ്ങളുടെ എല്ലാ ഡാറ്റയും (എൻട്രികളും കാറ്റഗറികളും) ഒരു ഫയലായി ഡൗൺലോഡ് ചെയ്ത് സൂക്ഷിക്കാം. ഫോൺ മാറ്റുമ്പോഴോ ആപ്പ് വീണ്ടും ഇൻസ്റ്റാൾ ചെയ്യുമ്പോഴോ ഈ ഫയൽ ഉപയോഗിച്ച് ഡാറ്റ തിരികെ കൊണ്ടുവരാം.</p>
+        <button class="btn" onclick="downloadBackup()">⬇️ ബാക്കപ്പ് ഡൗൺലോഡ് ചെയ്യുക</button>
+        <label style="margin-top:18px;">ബാക്കപ്പിൽ നിന്ന് പുനഃസ്ഥാപിക്കുക</label>
+        <input type="file" id="restoreFile" accept="application/json">
+        <button class="btn secondary" onclick="restoreBackup()">⬆️ റീസ്റ്റോർ ചെയ്യുക</button>
+      </div>
+      <div class="card">
+        <p style="font-size:12.5px; color:var(--muted);">⚠️ ഡാറ്റ ഈ ഫോണിൽ / ബ്രൗസറിൽ മാത്രമാണ് സൂക്ഷിക്കുന്നത്. ബ്രൗസർ ഡാറ്റ ക്ലിയർ ചെയ്‌താൽ എൻട്രികൾ നഷ്ടപ്പെടും — അതിനാൽ ഇടയ്ക്കിടെ ബാക്കപ്പ് എടുക്കുക.</p>
+        <button class="btn danger small" onclick="clearAllData()">🗑️ എല്ലാ ഡാറ്റയും ഡിലീറ്റ് ചെയ്യുക</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottomnav">
+    <button class="active" data-sec="home" onclick="showSection('home')"><span class="ic">🏠</span>ഹോം</button>
+    <button data-sec="history" onclick="showSection('history')"><span class="ic">📜</span>ചരിത്രം</button>
+    <button data-sec="entry" onclick="showSection('entry')"><span class="ic">➕</span>എൻട്രി</button>
+    <button data-sec="report" onclick="showSection('report')"><span class="ic">📊</span>റിപ്പോർട്ട്</button>
+    <button data-sec="category" onclick="showSection('category')"><span class="ic">🏷️</span>കാറ്റഗറി</button>
+  </nav>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
