@@ -43,19 +43,28 @@
   /* Header */
   header.topbar{
     background:linear-gradient(160deg,var(--green) 0%, var(--green-dark) 100%);
-    color:#fff; padding:18px 18px 60px 18px; position:relative;
+    color:#fff; padding:20px 18px 62px 18px; position:relative; overflow:hidden;
   }
-  header.topbar .brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px;}
-  header.topbar .brand img{ width:32px; height:32px; border-radius:9px;}
+  header.topbar::before{
+    content:""; position:absolute; top:-40px; right:-40px; width:160px; height:160px; border-radius:50%;
+    background:rgba(255,255,255,0.06); pointer-events:none;
+  }
+  header.topbar::after{
+    content:""; position:absolute; bottom:10px; left:-30px; width:110px; height:110px; border-radius:50%;
+    background:rgba(255,255,255,0.05); pointer-events:none;
+  }
+  header.topbar .brand{ display:flex; align-items:center; gap:11px; font-weight:800; font-size:19.5px; position:relative; letter-spacing:.2px;}
+  header.topbar .brand img{ width:34px; height:34px; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,.2);}
+  header.topbar .tagline{ font-size:11.5px; color:rgba(255,255,255,.78); margin:3px 0 0 45px; font-weight:500; position:relative;}
   .balance-card{
     position:absolute; left:16px; right:16px; bottom:-46px;
-    background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    background:var(--card); border-radius:var(--radius); box-shadow:0 10px 26px rgba(12,47,43,0.14);
     display:flex; padding:14px 6px; text-align:center;
   }
   .balance-card .col{ flex:1; padding:4px 2px; border-left:1px solid var(--border);}
   .balance-card .col:first-child{ border-left:none;}
   .balance-card .label{ font-size:11.5px; color:var(--muted); margin-bottom:4px; font-weight:500;}
-  .balance-card .val{ font-size:15px; font-weight:700;}
+  .balance-card .val{ font-size:15px; font-weight:800; letter-spacing:-.2px;}
   .val.income{ color:var(--green);}
   .val.expense{ color:var(--red);}
   .val.balance{ color:var(--green-dark);}
@@ -87,12 +96,13 @@
 
   .cat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:6px;}
   .cat-chip{
-    display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px;
-    border-radius:12px; border:1.5px solid var(--border); background:#fbfdfc; cursor:pointer; font-size:11px; font-weight:600; color:var(--text);
+    display:flex; flex-direction:column; align-items:center; gap:6px; padding:10px 4px;
+    border-radius:14px; border:1.5px solid var(--border); background:#fbfdfc; cursor:pointer; font-size:11px; font-weight:600; color:var(--text);
+    transition:.15s;
   }
-  .cat-chip .emoji{ font-size:20px;}
-  .cat-chip.selected{ border-color:var(--green); background:var(--green-soft); color:var(--green-dark);}
-  .cat-chip.selected.expense-selected{ border-color:var(--red); background:var(--red-soft); color:var(--red);}
+  .cat-chip .emoji{ font-size:18px; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+  .cat-chip.selected{ border-color:var(--green); background:var(--green-soft); color:var(--green-dark); box-shadow:0 3px 10px rgba(16,122,96,.18);}
+  .cat-chip.selected.expense-selected{ border-color:var(--red); background:var(--red-soft); color:var(--red); box-shadow:0 3px 10px rgba(229,72,77,.18);}
 
   .btn{
     display:block; width:100%; text-align:center; padding:14px; border:none; border-radius:12px;
@@ -110,11 +120,11 @@
   .day-header{ display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:700; color:var(--muted); padding:0 4px 6px 4px;}
   .day-header .day-total{ font-weight:700;}
   .tx-item{
-    background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:12px 14px; display:flex; align-items:center; gap:10px; margin-bottom:8px;
+    background:var(--card); border-radius:14px; box-shadow:var(--shadow); padding:12px 14px 12px 12px; display:flex; align-items:center; gap:10px; margin-bottom:8px;
+    transition:.15s;
   }
-  .tx-icon{ width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
-  .tx-icon.income{ background:var(--green-soft);}
-  .tx-icon.expense{ background:var(--red-soft);}
+  .tx-item:active{ transform:scale(0.99);}
+  .tx-icon{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;}
   .tx-mid{ flex:1; min-width:0;}
   .tx-cat{ font-weight:700; font-size:14px;}
   .tx-note{ font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -157,12 +167,46 @@
   .summary-mini .box .lab{ font-size:11px; color:var(--muted); font-weight:600;}
   .summary-mini .box .num{ font-size:16px; font-weight:800; margin-top:4px;}
 
+  /* 7-day trend mini chart */
+  .trend-card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 14px 10px 14px; margin-bottom:14px;}
+  .trend-legend{ display:flex; gap:14px; font-size:11px; color:var(--muted); margin-bottom:10px; font-weight:600;}
+  .trend-legend span{ display:flex; align-items:center; gap:5px;}
+  .trend-legend i{ width:9px; height:9px; border-radius:3px; display:inline-block;}
+  .trend-bars{ display:flex; align-items:flex-end; gap:8px; height:92px;}
+  .trend-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:3px;}
+  .trend-stack{ width:100%; max-width:22px; display:flex; flex-direction:column-reverse; align-items:center; height:78px; justify-content:flex-start; gap:2px;}
+  .trend-seg{ width:100%; border-radius:4px; min-height:2px;}
+  .trend-seg.inc{ background:linear-gradient(180deg,var(--green-light),var(--green));}
+  .trend-seg.exp{ background:linear-gradient(180deg,#f16b6f,var(--red));}
+  .trend-day{ font-size:10px; color:var(--muted); font-weight:700; margin-top:2px;}
+
+  /* category breakdown bars (reports) */
+  .breakdown-card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; margin-bottom:14px;}
+  .breakdown-title{ font-size:13px; font-weight:700; color:var(--green-dark); margin-bottom:12px; display:flex; align-items:center; gap:6px;}
+  .cat-bar-row{ margin-bottom:11px;}
+  .cat-bar-row:last-child{ margin-bottom:0;}
+  .cat-bar-top{ display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px; font-weight:600;}
+  .cat-bar-top .nm{ display:flex; align-items:center; gap:6px; color:var(--text);}
+  .cat-bar-top .amt{ font-weight:800; flex-shrink:0; margin-left:8px;}
+  .cat-bar-track{ height:8px; border-radius:6px; background:var(--border); overflow:hidden;}
+  .cat-bar-fill{ height:100%; border-radius:6px;}
+  .cat-bar-fill.income{ background:linear-gradient(90deg,var(--green-light),var(--green));}
+  .cat-bar-fill.expense{ background:linear-gradient(90deg,#f16b6f,var(--red));}
+  .cat-bar-pct{ font-size:10.5px; color:var(--muted); margin-top:3px; font-weight:600;}
+
   .toast{
     position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--green-dark); color:#fff;
-    padding:11px 20px; border-radius:30px; font-size:13px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.25);
-    opacity:0; pointer-events:none; transition:.25s; z-index:100; white-space:nowrap;
+    padding:11px 12px 11px 20px; border-radius:30px; font-size:13px; font-weight:600; box-shadow:0 6px 18px rgba(0,0,0,.25);
+    opacity:0; pointer-events:none; transition:.25s; z-index:100;
+    display:flex; align-items:center; gap:10px; max-width:92vw;
   }
-  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px);}
+  .toast #toastMsg{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); pointer-events:auto;}
+  .toast #toastUndoBtn{
+    background:rgba(255,255,255,.16); color:#fff; border:none; border-radius:20px; padding:6px 14px;
+    font-family:inherit; font-weight:700; font-size:12.5px; cursor:pointer;
+  }
+  .toast #toastUndoBtn:active{ background:rgba(255,255,255,.28);}
 
   .modal-bg{ position:fixed; inset:0; background:rgba(12,47,43,.45); display:none; align-items:flex-end; justify-content:center; z-index:200;}
   .modal-bg.show{ display:flex;}
@@ -187,6 +231,7 @@
 
   <header class="topbar">
     <div class="brand"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAPgUlEQVR4nO2deZAU1R3Hvz0MLujuzIKy8QgKeCCIIHgvRAwKkeCBLLAsuOhKUh6UURC1EvJHysRYqYQg4kXQoAgIisYjRIloQFa51JSABEVLC6E2QICZHWBZhJ38gW3NDnP0O/od3b9PVVfhOt39m3nf7/v93nt9OOW/ugWGkdYdAOE7ju4AXKLptFa9kdjDSa5212KKqIZzkuiJXGTqQpkZVBqAhE94xdWK70ZQYQASPsGL70aI+ihPEj4hC9+M4EcGIOETfiHdCBFZB/oOEj+hAmk6k5UBSPiEaqRkAxljABI/oZM0BEwgWgKR+AkT4NZhVGBfEj9hElyZgDcDkPgJE2HWJY8BSPyEyTDpk3UQTOInbMBzOcSSAUj8hE140qtXA5D4CRspqlsvBiDxEzZTUL9+XgxHEMZTLAOQPYggkFfHhQxA4ieCRE49y74alCCsIorcN8VT708EkWPWB3TcFB8qEn+cK7R/+X3jJUVC5MKJT6nN/hv1/oyIipwXMgc332cBMgAHugRfDDKEZ/IagMSfB1NFnw8yQ1EcAHDi95IB8pH4k12iz0f5FDJDDo4xAIkfwRF9PsgMrXDIAN8RdOFnQ0YAQAYIn/CzCbkRHCc+uRYIofgT08It/GzK7w2nEUJnABJ+YcJmBCc++SYgBAZITHtey3k7TK0T2n/vQ3MkRcJG+b3HrA8FklAYQIX4RYXOigpjhMEETnxScA2Q+LO/wvcielGhqjhHMconB9cITnzSTSR+jxQTo6pyRUccQTVBIA0gW/z5BKerPs9GVXxBNEGgDCBT+KaLPh8q4g6SEQJjAFnizyUg00WfDz+/S1BM4MTvsd8Aieni4g+S8LMR+W4Ni7rjlOrPcv6/8kn2m8B6A8gWf1BEnw+W79qwqDsA5DUAYL8JrDaAqPize8agi9/F6/d2DQAE1wRO/J5x1hkgMX2e0P5hFX42hX6HTPEDhQ3gUn50TckqnPjddhkg8Yg88YdV+Nnk+k2yDQB4NME9dpnAqucCkfj9IfO36DC1Lqf4vSLaRqoJxWNRSPjFcX+XQqvMhWaEbMWaDMDbs5D42djU+wPhY9iUBawwAInfHLyWR7aYIJr7yYjmkJwhJn4SvndEav9cJB6Zh/jdZg+Kjc4AJH4zYTEKbxuqwlgDkPjVIrv3z8RkExhrAB5I/Orw0zAqiSANmLbx9Bgkfn5UiDk5Y552XeXaItojyNqSj5L4VSIiftZ9j7atfo1lbkaVQMlH5zPvQ+K3C5429hOjDMAKiV8MGaWP7WMBY8YArD2D6seQEPlhbYvko/O1683djMgAyZn8aZF6fz5k9tw8l0+ItLlMjDAAK1T6mIetGVm7AVh7AhK/OH7U7Zt6f8BeChmQBbQbgAVbe5kwYVsbaR0E8/YA1Pvz4+esDfdYIOyDYC9Q6WMPNmUBbQZIPqa//gsbKubsubKARi1Ej+YCszGh99/QsBVLNn2s7fy89PthVwzp3kf5eTtMrWNsLz06dGJ31ig/c/LxBZ4/a8pdXSOfnYZ3tmzUdn5eXptwP67o1kP5im3P9ZUA2NosPnGsX+HkxZqb4nWKf/PO7VaK/7yTO+OKbj0AeHukiVTW2zEOUD4G4On9dQ98Z658S+v5ebmz/xBt5/bylIlsWLQhC2tmgXSxI5XA4k9W6w6DmYrSGKp6X6Y7DONRvw7gEVOm0matWoZDRw7rDoOZCZcOQknUjAqXqS2DvA6QfII9xeksfw4casactcu1nZ+Xkmhb3HrpIN1hcLUdj0ZEoBKoAPM+WolE037dYTAz+oLLcdIJZbrDsAIzcmQWpgx+u3aswIwbi6fvdDqNxoNN2Nu0D//ZsR2rvv4cyYMHpMRw1dm9cH2vi5n2GXTWeVLOLYO9D81Bh6l1HOsCalBmANWpTQaDu/fm2q8lncbL61fj4WWv4qs9O4Vi+GxXA8b2G4BoJDzJOvnEAsTvVLMmEEE6DSWbR0wZ/IoQcRyM6nM5lk/8DSq7iC1AbUvsxuuffigpMr2wDYbV6NLYbsXEdMlKrF17LBx/N06LdxQ6zpJPP5IUkR5MbkslBkg++YKK0xhJWUl7/HZotdAx6r8O1iPJvaBKM0YOgk1kW2I31m79gmvfI+kWtGt7HA5+e4hr/52pJP665l8ob388876nd+iEizp34zpvGHBit43x/WK45FPe3GzK7E8ufrboKby8fo3uMJh5tmYibuh1ke4wALC3b/z2Gj/DAUDrAJ7YntyD1zau0x0GM53LT8S1PfvpDsNofDeA197fZJ764G0cbmnRHQYzt1UORhuLp09VaMeYX8fU6c9UcxOeW7dCdxjMlJa0Q+2FV+gOIycmtbX/F8MxYlr9/9y6FUg1N+kOg5lx/X6EWLv2usNoBVfbBuliONs43NKCWauW6Q6DmYjj4LbKq3WHYQVkgAK8umEttiV26w6DmaE9+qJrxwrdYViBFTfF62L/oWbcXjlYyrFeWb8GO/c1cu1bEm2Lukuu9Pz5mr79uc5jJv7qkxbCCnDzxQOlHGdHKoGnV7/DvX9ll3Pw8DD1N4yHAV8HwclZCz0FYfICmAymr/iH0DTqtT0vlBiNXljvFU7OWkiDYJup/2ozZq/mH0ifcFwJqvpcKjEiIhMqgXzk3S0bUbvgMbQIvI389sohiLdjvwaI8AYZQDKHjhzG2q1f4C+rluENwcuYz+jQCZMHDpMUGZGLKE0CFWfBx/VYuvmTgp9pPHgAe5r2Y8uuBjRxXvWZSVlJe8wdOxHHH1cifCzr8VGjlAE8sKFhq9K7skqibbGg9hfofeoZys4ZVsgAhtGlYyc8VzORxK8IMoAhtIlEMK7fADw4tJoGvQohA2gmGolgaI++mHr1CHSvOFV3OKEjmhaYoiP4aROJ4K4B1+CO/j9BRWlMdzhG46dGaSFME0daWjCz/i3csXg26r/arDuc0EIG0MiRlha8u2Ujrnv6D/j5i7OsfAyj7ZABDGHxJ6sxZNZD+MbCy69txt87wggmtuxqwLDZD2NnKqk7FLOgi+HCwzeJ3Rjz/CNWvpPARmga1AO/vOpG3DVg6DF/TyONVHMTdu1rxMb/foO3P1uPFV9uErr4DQD+vf1rPLh0MX730zFCxyGK45TdOtrXYqXxmUWePheUewK+3L0DD/x9Pt75fIPQcRzHwRsTHkD/rmrf7ug3rO0cmyD2WMliGPdUCNs588Qf4KXxk3BHpdgL6tLpNKa8/ryVzyOSis/6pDGADziOg98Pq8GoPpcLHWfzzu1Ct1ISxYn4brEQM3NEHc466WShY0xb/gb2H2qWFJGN+KtPygA+UhJti5kjboXjONzH+N/+FJ54f6nEqIhMjDOASY/Nk8FlZ5yNEedfInSMx+uXovGgfU+ny8bEtjVmEGz77E8hfj24Cm3btOHeP3nwAGateltiRHphamvbB8GxutF+n8J4unTshLH9Bggd48n3/4l9zQclRWQHKrRjXAkUVCYPvFboTY97m/ZjNs0ISccoA7A+NMkmTu9wEqr7Vgod47H6t6ydETJ1odP/MUC4Z0JbMXngdUIvrNhzYF+41gUUaFNJBojdQuMAAOh2YgWqeos95e3x+qVSHrtiOqo0Y1QJlEkQyyAAmHLldYgIrAvs2t+IZ9a8KzEi/zG5LY0zgGk1omzO7nQKhve6WOgYM1e+yf3KVZ2Y2LYRVa+kj908Svd3NYb7Bl0vtDq8c18j5qxbLi8gw4jdPEqJJpE29FKIIM8GAcC5FacJv750xntvovnwt5Ii8g9TZ39cjDRAGLjvx9cL7b8jlcDcD9+TFE14UWoAnjIoqFng/FNOxzXnXiB0jOkrlqD5sLm3TvK0nepS2dgMYGrKlMn9g24Q2r+hcS/mf7RSUjT+YXJbqlkIo0WxnPQ9rQuuPqe30DGmv7ckWDfQK9aj8gwQG+89xQV9MAwADwwSGwtsS+zGgo/rJUUjD57BL4s2ZGFsCZRNUE1wUeczceWZPYWOMX3FEnx75IikiMSxqa2cstqRWgqTxrkvef6s6VNpRGts6f0BHWMAjrFAGEqhoMDdWWnSobYSKFZLK8PEUXRqQcFTIeSkAcoC5sNfqurToNZBcKx2JNd+ZALz4G0TXg3IQt8YQGAsQJiLLbW/9jGAS+wmth6ASiHz4C19WNveD7QbgAcygTnYPkVthAFEegIygT5EfnsTen/AEAMA/KUQoR8bSx8X/YNgzgExQKWQToRKH906M2kQnElsHHvPQCZQj4j4edrYT4wyAEAmMJ0giR/QvhKce4uNq2L+ImQC/xETfxV06yrXZtYYIHPjgEzgH8LTnbr1lGczrgRyiY1lzwIAmcAPRMXP25YqMNYAAJnABIIsfgBwympGcBYc6mhc8DLXfpkGoHUDNmT8dqaLHzA8A7iIZgKAsgELYRE/AEQUPYFOeCurIROoQIb4y2qqtOvF6xaV9cOZTOaYwPaLt/wirOWiFSWQC28WcKFskBuZ4hdtI9U4pWPMHwRnk3qBb1Dski3+MPV4mcj+HWwTPwA4pdX2GcAltZCMwIN04Y+xT/guTmn1jdYaAABSC18RPkaY6l/Z37VszAjhY+jEegMA8k3gEhQz+PXdbBc/EBADAHJMAATLCH5+lyCIHwCc0tHBMAAApBbJMQGQf5bIdDOoiLusOhjiBwJmABeZRgDMN4Oq+IIkfJdAGgCQbwKg+NqBKkPoiCOI4gcCbADAHxNk4mUxTVSMKs5RjKCKHzhqAID7FhQ78NsIgPqVZRXZJsjCd3FKRwXfAACQetF/E+RC1Bi6xhllo4MvfiBEBnDRZQRbCIvwXUJnABcyQmvCJnwXp3TUcCCEBnBJvfg33SFopezoGDC0OKUjh7v/Dq0JACD1UriMUDYq3ML/DocMkEXQjUDCbwUZoBBBMQOJPi+tDACQCfJimxlI9EVxAMAprRqe+UcygAdSi800Q9lIEj0DOQ0AkAmY0WUIEjw3zvf/IAP4i6g5SOS+UNAAAJmACC5O5n9Y9VgUgpBNFOmcnb0DygJE8HCy/0AZgAg1hQxwjFsIwmJy6rlYBiATEEEgr46jVOkTYcbLGICyAGEzBfXrdRBMJiBspKhuWWaByASETXjSK+sYgNYHCBvw3FnzrANQJiBMhkmfvAthZALCRJh1GRWoaKgcIkyCq1MWvRSCMgFhAtw6lLEQRpmA0IlQJyzrNaluEGQEQhVSqg/ZV4NSSUSoQJrO/HhRNmUDwi+kd7B+XgxHRiBk4Vtl4UcGyIaMQPDie0mtwgAuZATCK8rGkioN4JL55cgMhIuWCZT/A1+zEqeITtjKAAAAAElFTkSuQmCC" alt=""><span>വരവ് ചെലവ്</span></div>
+    <div class="tagline">നിങ്ങളുടെ ദിവസേനയുള്ള സാമ്പത്തിക കണക്ക്</div>
     <div class="balance-card">
       <div class="col"><div class="label">ആകെ വരവ്</div><div class="val income" id="sumIncome">₹0</div></div>
       <div class="col"><div class="label">ആകെ ചെലവ്</div><div class="val expense" id="sumExpense">₹0</div></div>
@@ -215,6 +260,15 @@
         <div class="box"><div class="lab">വരവ്</div><div class="num" id="monthIncome" style="color:var(--green)">₹0</div></div>
         <div class="box"><div class="lab">ചെലവ്</div><div class="num" id="monthExpense" style="color:var(--red)">₹0</div></div>
         <div class="box"><div class="lab">ബാക്കി</div><div class="num" id="monthBalance">₹0</div></div>
+      </div>
+
+      <h2 class="section-title">📈 കഴിഞ്ഞ 7 ദിവസം</h2>
+      <div class="card" id="weekChartCard">
+        <div id="weekChart"></div>
+        <div style="display:flex; gap:16px; justify-content:center; margin-top:8px; font-size:11.5px; color:var(--muted); font-weight:600;">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--green-light);margin-right:4px;"></span>വരവ്</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--red);margin-right:4px;"></span>ചെലവ്</span>
+        </div>
       </div>
 
       <h2 class="section-title">🕓 അടുത്തിടെ</h2>
@@ -340,7 +394,7 @@
 
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndoBtn" style="display:none;">അൺഡു</button></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -411,15 +465,41 @@ function fmtDateHuman(d) {
   const months = ["ജനു","ഫെബ്ര","മാർ","ഏപ്ര","മേയ്","ജൂൺ","ജൂലൈ","ഓഗ","സെപ്റ്റ","ഒക്ട്","നവം","ഡിസം"];
   return `${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}, ${days[dt.getDay()]}`;
 }
-function showToast(msg) {
+function showToast(msg, opts) {
+  opts = opts || {};
   const t = document.getElementById("toast");
-  t.textContent = msg;
+  document.getElementById("toastMsg").textContent = msg;
+  const undoBtn = document.getElementById("toastUndoBtn");
+  if (opts.undo) {
+    undoBtn.style.display = "inline-block";
+    undoBtn.onclick = () => {
+      opts.undo();
+      t.classList.remove("show");
+      clearTimeout(window._toastTimer);
+    };
+  } else {
+    undoBtn.style.display = "none";
+    undoBtn.onclick = null;
+  }
   t.classList.add("show");
   clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+  window._toastTimer = setTimeout(() => t.classList.remove("show"), opts.duration || 2200);
 }
 function catById(type, id) {
   return (categories[type] || []).find(c => c.id === id);
+}
+
+/* ---------- Category colors & breakdown ---------- */
+const CAT_PALETTE = ["#107a60","#2f8fd1","#e6a826","#e5484d","#8b5cf6","#059669","#f97316","#0ea5e9","#d946ef","#65a30d","#dc2626","#0d9488"];
+function hashStr(s) { let h = 0; for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) | 0; } return Math.abs(h); }
+function catColor(catId) { return CAT_PALETTE[hashStr(catId || "x") % CAT_PALETTE.length]; }
+function categoryBreakdown(list, type) {
+  const map = {};
+  list.filter(t => t.type === type).forEach(t => {
+    const c = catById(t.type, t.catId) || { name: "മറ്റുള്ളവ" };
+    map[c.name] = (map[c.name] || 0) + t.amount;
+  });
+  return Object.entries(map).sort((a, b) => b[1] - a[1]);
 }
 
 /* ---------- Navigation ---------- */
@@ -431,6 +511,7 @@ function showSection(name) {
   if (name === "home") renderHome();
   if (name === "history") renderHistory();
   if (name === "category") renderCategoryManage();
+  if (name === "report" && document.getElementById("repFrom").value) generateReport();
   if (name === "entry" && !document.getElementById("fEditId").value) {
     document.getElementById("fDate").value = todayStr();
   }
@@ -453,7 +534,8 @@ function renderCatGrid() {
   (categories[currentType] || []).forEach(c => {
     const div = document.createElement("div");
     div.className = "cat-chip" + (selectedCatId === c.id ? " selected" + (currentType === "expense" ? " expense-selected" : "") : "");
-    div.innerHTML = `<span class="emoji">${c.emoji}</span><span>${c.name}</span>`;
+    const col = catColor(c.id);
+    div.innerHTML = `<span class="emoji" style="background:${col}1f;">${c.emoji}</span><span>${c.name}</span>`;
     div.onclick = () => { selectedCatId = c.id; renderCatGrid(); };
     grid.appendChild(div);
   });
@@ -513,11 +595,21 @@ function editTransaction(id) {
 }
 
 function deleteTransaction(id) {
-  if (!confirm("ഈ എൻട്രി ഡിലീറ്റ് ചെയ്യണോ?")) return;
-  transactions = transactions.filter(t => t.id !== id);
+  const idx = transactions.findIndex(t => t.id === id);
+  if (idx === -1) return;
+  const removed = transactions[idx];
+  transactions.splice(idx, 1);
   saveTx(transactions);
-  showToast("🗑️ ഡിലീറ്റ് ചെയ്തു");
   renderHome(); renderHistory();
+  showToast("🗑️ ഡിലീറ്റ് ചെയ്തു", {
+    duration: 4500,
+    undo: () => {
+      transactions.splice(idx, 0, removed);
+      saveTx(transactions);
+      renderHome(); renderHistory();
+      showToast("↩️ എൻട്രി തിരികെ കൊണ്ടുവന്നു");
+    }
+  });
 }
 
 /* ---------- Home ---------- */
@@ -551,12 +643,49 @@ function renderHome() {
   } else {
     box.innerHTML = recent.map(t => txItemHtml(t, false)).join("");
   }
+
+  renderWeekChart();
+}
+
+function renderWeekChart() {
+  const days = [];
+  const dayLabels = ["ഞാ", "തി", "ചൊ", "ബു", "വ്യാ", "വെ", "ശനി"];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push({ key: d.toISOString().slice(0, 10), label: dayLabels[d.getDay()], isToday: i === 0 });
+  }
+  const sums = days.map(d => {
+    let inc = 0, exp = 0;
+    transactions.forEach(t => {
+      if (t.date !== d.key) return;
+      if (t.type === "income") inc += t.amount; else exp += t.amount;
+    });
+    return { ...d, inc, exp };
+  });
+  const max = Math.max(1, ...sums.map(s => Math.max(s.inc, s.exp)));
+  const barW = 12, gap = 4, groupGap = 16, chartH = 78, baseY = 8;
+  const groupW = barW * 2 + gap;
+  const totalW = sums.length * (groupW + groupGap);
+
+  let svg = `<svg viewBox="0 0 ${totalW} 108" style="width:100%; height:118px; display:block;">`;
+  sums.forEach((s, idx) => {
+    const x = idx * (groupW + groupGap) + groupGap / 2;
+    const incH = Math.max(s.inc > 0 ? 3 : 0, (s.inc / max) * chartH);
+    const expH = Math.max(s.exp > 0 ? 3 : 0, (s.exp / max) * chartH);
+    svg += `<rect x="${x}" y="${baseY + chartH - incH}" width="${barW}" height="${incH}" rx="3" fill="#16a97e"/>`;
+    svg += `<rect x="${x + barW + gap}" y="${baseY + chartH - expH}" width="${barW}" height="${expH}" rx="3" fill="#e5484d"/>`;
+    svg += `<text x="${x + barW + gap / 2}" y="${baseY + chartH + 18}" font-size="10" fill="${s.isToday ? '#107a60' : '#6c7a76'}" font-weight="${s.isToday ? 700 : 500}" text-anchor="middle">${s.label}</text>`;
+  });
+  svg += `</svg>`;
+  document.getElementById("weekChart").innerHTML = svg;
 }
 
 function txItemHtml(t, showActions) {
   const c = catById(t.type, t.catId) || { emoji: "❓", name: "മറ്റുള്ളവ" };
-  return `<div class="tx-item">
-    <div class="tx-icon ${t.type}">${c.emoji}</div>
+  const col = catColor(t.catId);
+  return `<div class="tx-item" style="border-left:4px solid ${col};">
+    <div class="tx-icon" style="background:${col}1f;">${c.emoji}</div>
     <div class="tx-mid">
       <div class="tx-cat">${c.name}</div>
       <div class="tx-note">${t.note ? t.note : fmtDateHuman(t.date)}</div>
@@ -645,11 +774,22 @@ function renameCategory(type, id) {
 function deleteCategory(type, id) {
   const used = transactions.some(t => t.type === type && t.catId === id);
   if (used && !confirm("ഈ കാറ്റഗറി ചില എൻട്രികളിൽ ഉപയോഗിച്ചിട്ടുണ്ട്. എന്നാലും ഡിലീറ്റ് ചെയ്യണോ?")) return;
-  if (!used && !confirm("ഈ കാറ്റഗറി ഡിലീറ്റ് ചെയ്യണോ?")) return;
-  categories[type] = categories[type].filter(c => c.id !== id);
+
+  const idx = categories[type].findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const removed = categories[type][idx];
+  categories[type].splice(idx, 1);
   saveCats(categories);
   renderCategoryManage();
-  showToast("🗑️ ഡിലീറ്റ് ചെയ്തു");
+  showToast("🗑️ ഡിലീറ്റ് ചെയ്തു", {
+    duration: 4500,
+    undo: () => {
+      categories[type].splice(idx, 0, removed);
+      saveCats(categories);
+      renderCategoryManage();
+      showToast("↩️ കാറ്റഗറി തിരികെ കൊണ്ടുവന്നു");
+    }
+  });
 }
 
 /* ---------- Reports ---------- */
@@ -667,6 +807,7 @@ function setReportRange(range) {
   }
   document.getElementById("repFrom").value = from;
   document.getElementById("repTo").value = to;
+  generateReport();
 }
 
 function getReportData() {
@@ -681,8 +822,25 @@ function getReportData() {
   return { list, from, to, type };
 }
 
+function miniBreakdownHtml(list, type, color) {
+  const cats = categoryBreakdown(list, type);
+  if (!cats.length) return `<div style="font-size:12.5px; color:var(--muted); text-align:center; padding:10px 0;">ഡാറ്റ ഇല്ല</div>`;
+  const total = cats.reduce((s, [, v]) => s + v, 0);
+  return cats.map(([name, val]) => {
+    const pct = total ? Math.round((val / total) * 100) : 0;
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; margin-bottom:4px;">
+        <span>${name}</span><span style="color:${color};">${fmtMoney(val)} · ${pct}%</span>
+      </div>
+      <div style="background:var(--bg); border-radius:6px; height:7px; overflow:hidden;">
+        <div style="width:${pct}%; height:100%; background:${color}; border-radius:6px;"></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
 function generateReport() {
-  const { list, from, to } = getReportData();
+  const { list, from, to, type } = getReportData();
   const box = document.getElementById("reportResult");
   if (list.length === 0) {
     box.innerHTML = `<div class="empty-state"><div class="emoji">📭</div>ഈ കാലയളവിൽ എൻട്രികൾ ഇല്ല</div>`;
@@ -701,6 +859,16 @@ function generateReport() {
     <button class="btn secondary" onclick="exportExcel()">📊 Excel ഡൗൺലോഡ്</button>
   </div>`;
 
+  if (type !== "expense" && income > 0) {
+    html += `<h2 class="section-title" style="margin-top:2px;">💰 വരവ് — കാറ്റഗറി തിരിച്ച്</h2>
+    <div class="card">${miniBreakdownHtml(list, "income", "#107a60")}</div>`;
+  }
+  if (type !== "income" && expense > 0) {
+    html += `<h2 class="section-title" style="margin-top:2px;">💸 ചെലവ് — കാറ്റഗറി തിരിച്ച്</h2>
+    <div class="card">${miniBreakdownHtml(list, "expense", "#e5484d")}</div>`;
+  }
+
+  html += `<h2 class="section-title" style="margin-top:2px;">📋 വിശദമായ എൻട്രികൾ <span style="font-weight:500; color:var(--muted); font-size:12px;">(${list.length})</span></h2>`;
   html += `<div class="card" style="padding:10px;">`;
   const groups = {};
   list.forEach(t => { (groups[t.date] = groups[t.date] || []).push(t); });
@@ -710,6 +878,7 @@ function generateReport() {
     html += `</div>`;
   });
   html += `</div>`;
+
 
   box.innerHTML = html;
 }
@@ -754,46 +923,134 @@ async function ensureMalayalamFont(doc) {
 }
 
 async function exportPDF() {
-  const { list, from, to } = getReportData();
+  const { list, from, to, type } = getReportData();
   if (list.length === 0) { showToast("⚠️ ഡാറ്റ ഇല്ല"); return; }
   showToast("⏳ PDF തയ്യാറാക്കുന്നു...");
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
+  const pageW = doc.internal.pageSize.getWidth();
   const hasMlFont = await ensureMalayalamFont(doc);
   const fontName = hasMlFont ? "NotoMal" : "helvetica";
   doc.setFont(fontName);
 
-  const title = hasMlFont ? "വരവ് ചെലവ് റിപ്പോർട്ട്" : "Varavu Chelavu Report";
-  doc.setFontSize(16);
-  doc.text(title, 14, 16);
-  doc.setFontSize(10);
-  doc.text(`${hasMlFont ? "കാലയളവ്" : "Period"}: ${from || '-'} to ${to || '-'}`, 14, 23);
-
   const income = list.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const expense = list.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0);
-  const summaryLabel = hasMlFont
-    ? `ആകെ വരവ്: Rs. ${income.toFixed(2)}   ആകെ ചെലവ്: Rs. ${expense.toFixed(2)}   ബാക്കി: Rs. ${(income - expense).toFixed(2)}`
-    : `Total Income: Rs. ${income.toFixed(2)}   Total Expense: Rs. ${expense.toFixed(2)}   Balance: Rs. ${(income - expense).toFixed(2)}`;
-  doc.text(summaryLabel, 14, 30);
+  const balance = income - expense;
+
+  const L = hasMlFont ? {
+    title: "വരവ് ചെലവ് റിപ്പോർട്ട്", period: "കാലയളവ്", generated: "തയ്യാറാക്കിയത്",
+    income: "ആകെ വരവ്", expense: "ആകെ ചെലവ്", balance: "ബാക്കി",
+    incomeBreak: "വരവ് — കാറ്റഗറി തിരിച്ച്", expenseBreak: "ചെലവ് — കാറ്റഗറി തിരിച്ച്",
+    detail: "വിശദമായ എൻട്രികൾ", cat: "കാറ്റഗറി", amt: "തുക (₹)", pct: "%",
+    date: "തീയതി", type: "തരം", note: "കുറിപ്പ്",
+    incLabel: "വരവ്", expLabel: "ചെലവ്", page: "പേജ്"
+  } : {
+    title: "Varavu Chelavu Report", period: "Period", generated: "Generated on",
+    income: "Total Income", expense: "Total Expense", balance: "Balance",
+    incomeBreak: "Income by Category", expenseBreak: "Expense by Category",
+    detail: "Transaction Details", cat: "Category", amt: "Amount (Rs.)", pct: "%",
+    date: "Date", type: "Type", note: "Note",
+    incLabel: "Income", expLabel: "Expense", page: "Page"
+  };
+
+  /* ---- Header band ---- */
+  doc.setFillColor(16, 122, 96);
+  doc.rect(0, 0, pageW, 30, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(17);
+  doc.text(L.title, 14, 14);
+  doc.setFontSize(9.5);
+  doc.setTextColor(220, 240, 235);
+  const periodStr = `${L.period}: ${from || '-'} to ${to || '-'}`;
+  doc.text(periodStr, 14, 22);
+  const genStr = `${L.generated}: ${todayStr()}`;
+  doc.text(genStr, pageW - 14 - doc.getTextWidth(genStr), 22);
+  doc.setTextColor(20, 20, 20);
+
+  /* ---- Summary boxes ---- */
+  const boxY = 37, boxH = 20, gap = 5;
+  const boxW = (pageW - 28 - gap * 2) / 3;
+  const boxes = [
+    { label: L.income, val: income, color: [16, 122, 96] },
+    { label: L.expense, val: expense, color: [229, 72, 77] },
+    { label: L.balance, val: balance, color: [12, 47, 43] }
+  ];
+  boxes.forEach((b, i) => {
+    const x = 14 + i * (boxW + gap);
+    doc.setDrawColor(225, 232, 231);
+    doc.setFillColor(248, 250, 249);
+    doc.roundedRect(x, boxY, boxW, boxH, 2, 2, "FD");
+    doc.setFontSize(8.5);
+    doc.setTextColor(110, 120, 118);
+    doc.text(b.label, x + boxW / 2, boxY + 7, { align: "center" });
+    doc.setFontSize(12);
+    doc.setTextColor(...b.color);
+    doc.text(`Rs. ${b.val.toFixed(2)}`, x + boxW / 2, boxY + 15, { align: "center" });
+  });
+  doc.setTextColor(20, 20, 20);
+
+  let cursorY = boxY + boxH + 10;
+
+  /* ---- Category breakdown tables ---- */
+  function breakdownTable(list, ttype, label, color) {
+    const cats = categoryBreakdown(list, ttype);
+    if (!cats.length) return;
+    const total = cats.reduce((s, [, v]) => s + v, 0);
+    doc.setFontSize(11);
+    doc.setTextColor(...color);
+    doc.text(label, 14, cursorY);
+    doc.setTextColor(20, 20, 20);
+    doc.autoTable({
+      head: [[L.cat, L.amt, L.pct]],
+      body: cats.map(([name, val]) => [name, val.toFixed(2), (total ? Math.round((val / total) * 100) : 0) + "%"]),
+      startY: cursorY + 3,
+      margin: { left: 14, right: 14 },
+      styles: { fontSize: 9, font: fontName, cellPadding: 2.5 },
+      headStyles: { fillColor: color, font: fontName, fontSize: 9 },
+      alternateRowStyles: { fillColor: [248, 250, 249] },
+      columnStyles: { 1: { halign: "right" }, 2: { halign: "right" } }
+    });
+    cursorY = doc.lastAutoTable.finalY + 10;
+  }
+
+  if (type !== "expense" && income > 0) breakdownTable(list, "income", L.incomeBreak, [16, 122, 96]);
+  if (type !== "income" && expense > 0) breakdownTable(list, "expense", L.expenseBreak, [229, 72, 77]);
+
+  /* ---- Full transaction table ---- */
+  doc.setFontSize(11);
+  doc.setTextColor(12, 47, 43);
+  doc.text(`${L.detail} (${list.length})`, 14, cursorY);
+  doc.setTextColor(20, 20, 20);
 
   const rows = list.map(t => {
     const c = catById(t.type, t.catId) || { name: "-" };
-    const typeLabel = hasMlFont ? (t.type === "income" ? "വരവ്" : "ചെലവ്") : (t.type === "income" ? "Income" : "Expense");
+    const typeLabel = t.type === "income" ? L.incLabel : L.expLabel;
     return [t.date, typeLabel, c.name, t.note || "-", (t.type === "income" ? "+" : "-") + t.amount.toFixed(2)];
   });
 
-  const head = hasMlFont
-    ? [["തീയതി", "തരം", "കാറ്റഗറി", "കുറിപ്പ്", "തുക (Rs.)"]]
-    : [["Date", "Type", "Category", "Note", "Amount (Rs.)"]];
-
   doc.autoTable({
-    head,
+    head: [[L.date, L.type, L.cat, L.note, L.amt]],
     body: rows,
-    startY: 36,
-    styles: { fontSize: 9, font: fontName },
+    startY: cursorY + 3,
+    margin: { left: 14, right: 14, bottom: 16 },
+    styles: { fontSize: 8.5, font: fontName, cellPadding: 2.5 },
     headStyles: { fillColor: [16, 122, 96], font: fontName },
-    bodyStyles: { font: fontName }
+    alternateRowStyles: { fillColor: [248, 250, 249] },
+    columnStyles: { 4: { halign: "right" } },
+    didParseCell: (data) => {
+      if (data.section === "body" && data.column.index === 4) {
+        const isIncome = String(data.cell.raw).startsWith("+");
+        data.cell.styles.textColor = isIncome ? [16, 122, 96] : [229, 72, 77];
+      }
+    },
+    didDrawPage: () => {
+      const pageCount = doc.internal.getNumberOfPages();
+      const cur = doc.internal.getCurrentPageInfo().pageNumber;
+      doc.setFontSize(8);
+      doc.setTextColor(140, 148, 146);
+      doc.text(`${L.page} ${cur} / ${pageCount}`, pageW / 2, doc.internal.pageSize.getHeight() - 8, { align: "center" });
+    }
   });
 
   doc.save(`varavu-chelavu-report-${todayStr()}.pdf`);
@@ -801,30 +1058,65 @@ async function exportPDF() {
 }
 
 function exportExcel() {
-  const { list, from, to } = getReportData();
+  const { list, from, to, type } = getReportData();
   if (list.length === 0) { showToast("⚠️ ഡാറ്റ ഇല്ല"); return; }
 
-  const rows = list.map(t => {
+  const income = list.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  const expense = list.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+
+  /* ---- Sheet 1: സംഗ്രഹം (Summary + category breakdown) ---- */
+  const summaryRows = [];
+  summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": `കാലയളവ്: ${from || '-'} മുതൽ ${to || '-'} വരെ` });
+  summaryRows.push({});
+  summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": "ആകെ വരവ്", "തുക": income });
+  summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": "ആകെ ചെലവ്", "തുക": expense });
+  summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": "ബാക്കി", "തുക": income - expense });
+  summaryRows.push({});
+
+  if (type !== "expense" && income > 0) {
+    summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": "വരവ് — കാറ്റഗറി തിരിച്ച്" });
+    categoryBreakdown(list, "income").forEach(([name, val]) => {
+      summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": name, "തുക": val });
+    });
+    summaryRows.push({});
+  }
+  if (type !== "income" && expense > 0) {
+    summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": "ചെലവ് — കാറ്റഗറി തിരിച്ച്" });
+    categoryBreakdown(list, "expense").forEach(([name, val]) => {
+      summaryRows.push({ "വരവ് ചെലവ് റിപ്പോർട്ട്": name, "തുക": val });
+    });
+  }
+
+  const wsSummary = XLSX.utils.json_to_sheet(summaryRows, { skipHeader: true });
+  wsSummary["!cols"] = [{ wch: 32 }, { wch: 16 }];
+  for (const ref in wsSummary) {
+    if (ref[0] === "!") continue;
+    const cell = wsSummary[ref];
+    if (cell.t === "n") cell.z = "#,##0.00";
+  }
+
+  /* ---- Sheet 2: ഇടപാടുകൾ (full transaction list) ---- */
+  const txRows = list.map(t => {
     const c = catById(t.type, t.catId) || { name: "-" };
     return {
       "തീയതി": t.date,
       "തരം": t.type === "income" ? "വരവ്" : "ചെലവ്",
       "കാറ്റഗറി": c.name,
       "കുറിപ്പ്": t.note || "",
-      "തുക": t.amount
+      "തുക": t.type === "income" ? t.amount : -t.amount
     };
   });
-  const income = list.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0);
-  const expense = list.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0);
-  rows.push({});
-  rows.push({ "തീയതി": "ആകെ വരവ്", "തുക": income });
-  rows.push({ "തീയതി": "ആകെ ചെലവ്", "തുക": expense });
-  rows.push({ "തീയതി": "ബാക്കി", "തുക": income - expense });
+  const wsTx = XLSX.utils.json_to_sheet(txRows);
+  wsTx["!cols"] = [{ wch: 14 }, { wch: 10 }, { wch: 18 }, { wch: 28 }, { wch: 12 }];
+  const range = XLSX.utils.decode_range(wsTx["!ref"]);
+  for (let r = range.s.r + 1; r <= range.e.r; r++) {
+    const ref = XLSX.utils.encode_cell({ r, c: 4 });
+    if (wsTx[ref] && wsTx[ref].t === "n") wsTx[ref].z = "#,##0.00";
+  }
 
-  const ws = XLSX.utils.json_to_sheet(rows);
-  ws["!cols"] = [{ wch: 14 }, { wch: 10 }, { wch: 18 }, { wch: 26 }, { wch: 12 }];
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Report");
+  XLSX.utils.book_append_sheet(wb, wsSummary, "സംഗ്രഹം");
+  XLSX.utils.book_append_sheet(wb, wsTx, "ഇടപാടുകൾ");
   XLSX.writeFile(wb, `varavu-chelavu-report-${todayStr()}.xlsx`);
   showToast("✅ Excel ഡൗൺലോഡ് ചെയ്തു");
 }
@@ -864,12 +1156,20 @@ function restoreBackup() {
 }
 
 function clearAllData() {
-  if (!confirm("എല്ലാ എൻട്രികളും ഡിലീറ്റ് ചെയ്യണോ? ഇത് തിരികെ എടുക്കാൻ കഴിയില്ല!")) return;
-  if (!confirm("ഉറപ്പാണോ? ബാക്കപ്പ് എടുത്തിട്ടില്ലെങ്കിൽ ഡാറ്റ എന്നേക്കുമായി നഷ്ടപ്പെടും.")) return;
+  if (!confirm("എല്ലാ എൻട്രികളും ഡിലീറ്റ് ചെയ്യണോ?")) return;
+  const backup = transactions;
   transactions = [];
   saveTx(transactions);
-  showToast("🗑️ എല്ലാ എൻട്രികളും ഡിലീറ്റ് ചെയ്തു");
   renderHome();
+  showToast("🗑️ എല്ലാ എൻട്രികളും ഡിലീറ്റ് ചെയ്തു", {
+    duration: 6000,
+    undo: () => {
+      transactions = backup;
+      saveTx(transactions);
+      renderHome();
+      showToast("↩️ എല്ലാ എൻട്രികളും തിരികെ കൊണ്ടുവന്നു");
+    }
+  });
 }
 
 /* ---------- PWA install prompt ---------- */
